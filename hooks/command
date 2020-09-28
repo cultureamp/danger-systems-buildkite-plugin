@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+
+# Note this ENV var differs from the `DANGER_GITHUB_API_TOKEN` that danger
+# expects to be available for reasons of descriptiveness
+DANGER_SYSTEMS_GITHUB_TOKEN=${DANGER_SYSTEMS_GITHUB_TOKEN:-}
+BUILDKITE=${BUILDKITE:-}
+BUILDKITE_REPO=${BUILDKITE_REPO:-}
+BUILDKITE_PULL_REQUEST=${BUILDKITE_PULL_REQUEST:-}
+BUILDKITE_BUILD_URL=${BUILDKITE_BUILD_URL:-}
+
+echo "--- :docker: Running danger-js"
+docker run \
+  --rm \
+  -v "$(pwd)":/source \
+  -w /source \
+  -e DANGER_GITHUB_API_TOKEN="$DANGER_SYSTEMS_GITHUB_TOKEN" \
+  -e BUILDKITE="$BUILDKITE" \
+  -e BUILDKITE_REPO="$BUILDKITE_REPO" \
+  -e BUILDKITE_PULL_REQUEST="$BUILDKITE_PULL_REQUEST" \
+  -e BUILDKITE_BUILD_URL="$BUILDKITE_BUILD_URL" \
+  node:12-alpine \
+  npx danger ci

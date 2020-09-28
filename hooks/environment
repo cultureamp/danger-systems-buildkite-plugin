@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+get_parameter () {
+    aws ssm get-parameter \
+        --name "$1" \
+        --region us-west-2 \
+        --with-decryption \
+        --output text \
+        --query Parameter.Value
+}
+
+if [[ -z "${DANGER_SYSTEMS_GITHUB_TOKEN:-}" ]]; then
+    echo "--- :aws: Loading build secrets"
+    DANGER_SYSTEMS_GITHUB_TOKEN=$(get_parameter "/infrastructure/DANGER_SYSTEMS_GITHUB_TOKEN")
+    export DANGER_SYSTEMS_GITHUB_TOKEN
+fi
