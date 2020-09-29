@@ -33,6 +33,5 @@ run_danger_js () {
     -e BUILDKITE_REPO="$BUILDKITE_REPO" \
     -e BUILDKITE_PULL_REQUEST="$BUILDKITE_PULL_REQUEST" \
     -e BUILDKITE_BUILD_URL="$BUILDKITE_BUILD_URL" \
-    cultureamp/danger-js \
-    yarn run danger ci
+    cultureamp/danger-js
 }
