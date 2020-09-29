@@ -3,5 +3,13 @@ description: Run danger as part of your pipeline
 author: https://github.com/cultureamp
 requirements: ["docker"]
 configuration:
-  properties: {}
+  properties:
+    language:
+      type: string
+      enum:
+        - js
+        - ruby
+    language_version:
+      type: string
+  required: ["language", "language_version"]
   additionalProperties: false
