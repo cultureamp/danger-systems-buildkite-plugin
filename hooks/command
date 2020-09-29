@@ -1,7 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+# shellcheck source=lib/danger_js.bash
+. "$BASEDIR/lib/danger_js.bash"
+# shellcheck source=lib/danger_ruby.bash
+. "$BASEDIR/lib/danger_ruby.bash"
 
 BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE=${BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE:-}
 BUILDKITE_PULL_REQUEST=${BUILDKITE_PULL_REQUEST:-}
@@ -18,7 +23,9 @@ if [[ -z "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" ]]; then
   buildkite-agent annotate --style error
   exit 1
 elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "js" ]; then
-  $DIR/../bin/danger_js
+  build_danger_js
+  run_danger_js
 elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "ruby" ]; then
-  $DIR/../bin/danger_ruby
+  build_danger_ruby
+  run_danger_ruby
 fi;
