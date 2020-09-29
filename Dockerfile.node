@@ -1,0 +1,26 @@
+ARG NODE_IMAGE_VERSION
+ARG BASE_IMAGE=node:${NODE_IMAGE_VERSION}-alpine
+FROM ${BASE_IMAGE}
+
+# Access
+ARG GITHUB_REGISTRY_TOKEN
+RUN if [[ -n "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
+  npm config set "//npm.pkg.github.com/:_authToken" "${GITHUB_REGISTRY_TOKEN}"; fi
+RUN if [[ -n "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
+  npm whoami --registry=https://npm.pkg.github.com; fi
+
+WORKDIR /source
+
+# Install project deps
+ADD package.json package.json
+ADD yarn.lock yarn.lock
+RUN yarn install --frozen-lockfile
+
+# Install danger if it not in the project deps
+RUN yarn run danger -V &>/dev/null || yarn add --dev danger
+
+ENV DANGER_GITHUB_API_TOKEN ""
+ENV BUILDKITE ""
+ENV BUILDKITE_REPO ""
+ENV BUILDKITE_PULL_REQUEST ""
+ENV BUILDKITE_BUILD_URL ""

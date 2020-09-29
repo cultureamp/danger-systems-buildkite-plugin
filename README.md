@@ -19,7 +19,9 @@ steps:
     agents:
       queue: build-unrestricted
     plugins:
-    - cultureamp/danger-systems#v0.0.1:
+    - cultureamp/danger-systems#v0.0.2:
+      language: js
+      language_version: 12
 ```
 
 Within Culture Amp’s build pipelines this will pull in the
@@ -37,7 +39,9 @@ steps:
   - label: ":zap: Danger"
     key: danger
     plugins:
-    - cultureamp/danger-systems#v0.0.1:
+    - cultureamp/danger-systems#v0.0.2:
+      language: js
+      language_version: 12
 ```
 
 2. Ensure that the API token is available to the pipeline as
@@ -64,8 +68,6 @@ message("Changed Files in this PR: \n - " + modifiedMD)
 
 ## Limitations
 
-* The plugin does not install any additional dependencies as yet, so your
-  `dangerfile` will only have access to the methods exposed by `danger.
 * The plugin is only configured to work with GitHub
 
 ## Developing
