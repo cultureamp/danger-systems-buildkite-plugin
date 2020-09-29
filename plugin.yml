@@ -7,6 +7,9 @@ configuration:
   properties:
     language:
       type: string
+      enum:
+        - js
+        - ruby
     language_version:
       type: string
   required:

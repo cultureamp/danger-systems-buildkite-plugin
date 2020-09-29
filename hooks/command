@@ -1,7 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-BUILDKITE_DANGER_SYSTEMS_LANGUAGE=${BUILDKITE_DANGER_SYSTEMS_LANGUAGE:-}
+DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+
+BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE=${BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE:-}
 BUILDKITE_PULL_REQUEST=${BUILDKITE_PULL_REQUEST:-}
 
 # Return early if there’s no PR to comment against
@@ -10,13 +12,13 @@ if [[ -z "${BUILDKITE_PULL_REQUEST:-}" ]]; then
   exit 0
 fi;
 
-if [[ -z "$BUILDKITE_DANGER_SYSTEMS_LANGUAGE" ]]; then
+if [[ -z "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" ]]; then
   # Ensure a language is specified
   echo "You must specify a language for danger to use"
   buildkite-agent annotate --style error
   exit 1
-elif [ "$BUILDKITE_DANGER_SYSTEMS_LANGUAGE" == "js" ]; then
-  bin/danger_js
-elif [ "$BUILDKITE_DANGER_SYSTEMS_LANGUAGE" == "ruby" ]; then
-  bin/danger_ruby
+elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "js" ]; then
+  $DIR/../bin/danger_js
+elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "ruby" ]; then
+  $DIR/../bin/danger_ruby
 fi;
