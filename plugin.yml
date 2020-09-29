@@ -1,7 +1,7 @@
 name: Danger Systems
 description: Run danger as part of your pipeline
 author: https://github.com/cultureamp
-requirements: []
+requirements: ["docker"]
 configuration:
   properties: {}
   additionalProperties: false
