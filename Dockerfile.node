@@ -7,13 +7,14 @@ ARG GITHUB_REGISTRY_TOKEN
 WORKDIR /source
 
 # Install project deps
+ADD .npmrc .npmrc
 ADD package.json package.json
 ADD yarn.lock yarn.lock
 
 # Setting the authToken, installing packages, and removing the authToken in a
 # single RUN step prevents the authToken from being stored in the docker images.
 RUN if [[ -n "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
-  npm config set "//npm.pkg.github.com/:_authToken" "$GITHUB_REGISTRY_TOKEN" \
+  npm config set "//npm.pkg.github.com/:_authToken" "${GITHUB_REGISTRY_TOKEN}" \
     && yarn --no-progress --frozen-lockfile \
     && npm config delete "//npm.pkg.github.com/:_authToken"; fi
 

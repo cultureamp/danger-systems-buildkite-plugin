@@ -11,7 +11,7 @@ build_danger_js () {
   docker build \
     -t cultureamp/danger-js \
     --build-arg NODE_IMAGE_VERSION="${BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE_VERSION}" \
-    --build-arg GITHUB_REGISTRY_TOKEN="${GITHUB_REGISTRY_TOKEN}" \
+    --build-arg GITHUB_REGISTRY_TOKEN \
     -f "$BASEDIR/Dockerfile.node" "$(pwd)"
 }
 
