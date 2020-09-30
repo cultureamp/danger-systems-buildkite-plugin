@@ -19,6 +19,9 @@ RUN if [[ -n "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
 RUN if [[ -z "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
   yarn --no-progress --frozen-lockfile; fi
 
+RUN yarn -v
+RUN ls -la
+
 # Install danger if it not in the project deps
 RUN yarn run danger -V &>/dev/null || yarn add --dev danger
 
