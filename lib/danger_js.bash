@@ -18,10 +18,10 @@ js_install () {
 
   BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
-  echo "--- :docker: Installing dependencies"
+  echo "--- :docker: Installing node dependencies"
   docker run \
     --rm \
-    -v "$(pwd)":/app \
+    -v "$(pwd)":/home/app \
     -v "$BASEDIR/bin":/build \
     -e GITHUB_REGISTRY_TOKEN="$GITHUB_REGISTRY_TOKEN" \
     cultureamp/danger-js \
@@ -40,11 +40,12 @@ js_run () {
   echo "--- :docker: Running danger-js"
   docker run \
     --rm \
-    -v "$(pwd)":/app \
+    -v "$(pwd)":/home/app \
     -e DANGER_GITHUB_API_TOKEN="$DANGER_SYSTEMS_GITHUB_TOKEN" \
     -e BUILDKITE="$BUILDKITE" \
     -e BUILDKITE_REPO="$BUILDKITE_REPO" \
     -e BUILDKITE_PULL_REQUEST="$BUILDKITE_PULL_REQUEST" \
     -e BUILDKITE_BUILD_URL="$BUILDKITE_BUILD_URL" \
-    cultureamp/danger-js
+    cultureamp/danger-js \
+    yarn run danger ci
 }

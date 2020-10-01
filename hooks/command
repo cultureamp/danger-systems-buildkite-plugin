@@ -27,6 +27,7 @@ elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "js" ]; then
   js_install
   js_run
 elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "ruby" ]; then
-  build_danger_ruby
-  run_danger_ruby
+  ruby_build
+  ruby_install
+  ruby_run
 fi;
