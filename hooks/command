@@ -23,8 +23,9 @@ if [[ -z "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" ]]; then
   buildkite-agent annotate --style error
   exit 1
 elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "js" ]; then
-  build_danger_js
-  run_danger_js
+  js_build
+  js_install
+  js_run
 elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "ruby" ]; then
   build_danger_ruby
   run_danger_ruby

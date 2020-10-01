@@ -2,28 +2,9 @@ ARG NODE_IMAGE_VERSION
 ARG BASE_IMAGE=node:${NODE_IMAGE_VERSION}-alpine
 FROM ${BASE_IMAGE}
 
-ARG GITHUB_REGISTRY_TOKEN
+WORKDIR /app
 
-WORKDIR /source
-
-# Copy installation files
-COPY yarn.lock package.json .npmrc* ./
-
-# Setting the authToken, installing packages, and removing the authToken in a
-# single RUN step prevents the authToken from being stored in the docker images.
-RUN if [[ -n "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
-  npm config set "//npm.pkg.github.com/:_authToken" "${GITHUB_REGISTRY_TOKEN}" \
-    && yarn --no-progress --frozen-lockfile \
-    && npm config delete "//npm.pkg.github.com/:_authToken"; fi
-
-RUN if [[ -z "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
-  yarn --no-progress --frozen-lockfile; fi
-
-RUN yarn -v
-RUN ls -la
-
-# Install danger if it not in the project deps
-RUN yarn run danger -V &>/dev/null || yarn add --dev danger
+ENV GITHUB_REGISTRY_TOKEN ""
 
 # ENV vars that danger cares about
 ENV DANGER_GITHUB_API_TOKEN ""

@@ -1,9 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-build_danger_js () {
+js_build () {
   BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE_VERSION=${BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE_VERSION:-"12"}
-  GITHUB_REGISTRY_TOKEN=${GITHUB_REGISTRY_TOKEN:-}
 
   BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
@@ -11,11 +10,25 @@ build_danger_js () {
   docker build \
     -t cultureamp/danger-js \
     --build-arg NODE_IMAGE_VERSION="${BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE_VERSION}" \
-    --build-arg GITHUB_REGISTRY_TOKEN \
     -f "$BASEDIR/Dockerfile.node" "$(pwd)"
 }
 
-run_danger_js () {
+js_install () {
+  GITHUB_REGISTRY_TOKEN=${GITHUB_REGISTRY_TOKEN:-}
+
+  BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+  echo "--- :docker: Installing dependencies"
+  docker run \
+    --rm \
+    -v "$(pwd)":/app \
+    -v "$BASEDIR/bin":/build \
+    -e GITHUB_REGISTRY_TOKEN="$GITHUB_REGISTRY_TOKEN" \
+    cultureamp/danger-js \
+    /bin/sh /build/docker_js_install
+}
+
+js_run () {
   # Note this ENV var differs from the `DANGER_GITHUB_API_TOKEN` that danger
   # expects to be available for reasons of descriptiveness
   DANGER_SYSTEMS_GITHUB_TOKEN=${DANGER_SYSTEMS_GITHUB_TOKEN:-}
@@ -27,12 +40,11 @@ run_danger_js () {
   echo "--- :docker: Running danger-js"
   docker run \
     --rm \
-    -v "$(pwd)":/source \
+    -v "$(pwd)":/app \
     -e DANGER_GITHUB_API_TOKEN="$DANGER_SYSTEMS_GITHUB_TOKEN" \
     -e BUILDKITE="$BUILDKITE" \
     -e BUILDKITE_REPO="$BUILDKITE_REPO" \
     -e BUILDKITE_PULL_REQUEST="$BUILDKITE_PULL_REQUEST" \
     -e BUILDKITE_BUILD_URL="$BUILDKITE_BUILD_URL" \
-    cultureamp/danger-js \
-    ls -la .
+    cultureamp/danger-js
 }
