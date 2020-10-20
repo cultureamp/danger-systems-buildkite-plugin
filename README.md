@@ -40,8 +40,8 @@ steps:
     key: danger
     plugins:
     - cultureamp/danger-systems#v0.0.2:
-      language: js
-      language_version: 12
+      language: ruby
+      language_version: 2.7.1
 ```
 
 2. Ensure that the API token is available to the pipeline as
@@ -52,10 +52,34 @@ Note that this differs from the token danger expects for GitHub integration
 what the token is used for and is mapped to the expected variable within
 the run command.
 
+### Language
+
+The plugin supports different implementations of danger by specifying a
+`language` option. The available options are:
+
+- `js` — JavaScript (and TypeScript)
+- `ruby` — Ruby
+
+Each implementation can specify a `language_version` option to ensure the
+danger process runs in the environment you’re expecting. The version is fed
+directly to the docker build process, so it should work for any of the following
+images available on Docker Hub:
+
+- `js` will run in any [node docker image](https://hub.docker.com/_/node/)
+  matching `node:#{language_version}-alpine`
+- `ruby` will run in any [node docker image](https://hub.docker.com/_/ruby/)
+  matching `ruby:#{language_version}-slim-buster`
+
 ## Usage
 
-The plugin is currently very simple. It will look for either a `dangerfile.ts`
-or `dangerfile.js` in the root of your repository and run it.
+### JavaScript and TypeScript
+
+If you’ve chosen `js` as the configured language, the plugin will:
+
+* Install your npm dependencies via `yarn`
+* Copy your app source into its runtime
+* Look for either a `dangerfile.ts` or `dangerfile.js` in the root of your
+  repository and run it
 
 Here’s a simple example from the danger documentation:
 
@@ -65,6 +89,34 @@ import { message, danger } from "danger"
 const modifiedMD = danger.git.modified_files.join("- ")
 message("Changed Files in this PR: \n - " + modifiedMD)
 ```
+
+### Ruby
+
+If you’ve chosen `ruby` as the configured language, the plugin will:
+
+* Install any dependencies configured within a `group :danger` in your Gemfile
+* Copy your app source into its runtime
+* Look for the `Dangerfile` in the root of your repository and run it
+
+Here’s a simple example from the danger documentation:
+
+```ruby
+message("Hello, I am message from danger.")
+```
+
+The ruby version of the plugin expects you to have at least the following in
+your Gemfile:
+
+```
+group :danger do
+  gem "danger"
+end
+```
+
+Note that only gems within that group will be available within the `Dangerfile`
+when it runs — no other default gems or groups will be installed. This is a
+limitation of the plugin structure to try to ensure that the base docker image
+does not require specific libraries to install your dependencies.
 
 ## Limitations
 
