@@ -13,22 +13,10 @@ js_build () {
     -f "$BASEDIR/Dockerfile.node" "$(pwd)"
 }
 
-js_install () {
-  GITHUB_REGISTRY_TOKEN=${GITHUB_REGISTRY_TOKEN:-}
-
-  BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
-
-  echo "--- :docker: Installing node dependencies"
-  docker run \
-    --rm \
-    -v "$(pwd)":/home/app \
-    -v "$BASEDIR/bin":/build \
-    -e GITHUB_REGISTRY_TOKEN="$GITHUB_REGISTRY_TOKEN" \
-    cultureamp/danger-js \
-    /bin/sh /build/docker_js_install
-}
-
 js_run () {
+  # Installation vars
+  GITHUB_REGISTRY_TOKEN=${GITHUB_REGISTRY_TOKEN:-}
+  # Run vars
   # Note this ENV var differs from the `DANGER_GITHUB_API_TOKEN` that danger
   # expects to be available for reasons of descriptiveness
   DANGER_SYSTEMS_GITHUB_TOKEN=${DANGER_SYSTEMS_GITHUB_TOKEN:-}
@@ -37,15 +25,13 @@ js_run () {
   BUILDKITE_PULL_REQUEST=${BUILDKITE_PULL_REQUEST:-}
   BUILDKITE_BUILD_URL=${BUILDKITE_BUILD_URL:-}
 
+  BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
   echo "--- :docker: Running danger-js"
   docker run \
-    --rm \
     -v "$(pwd)":/home/app \
-    -e DANGER_GITHUB_API_TOKEN="$DANGER_SYSTEMS_GITHUB_TOKEN" \
-    -e BUILDKITE="$BUILDKITE" \
-    -e BUILDKITE_REPO="$BUILDKITE_REPO" \
-    -e BUILDKITE_PULL_REQUEST="$BUILDKITE_PULL_REQUEST" \
-    -e BUILDKITE_BUILD_URL="$BUILDKITE_BUILD_URL" \
+    -v "$BASEDIR/bin":/build \
+    -e GITHUB_REGISTRY_TOKEN="$GITHUB_REGISTRY_TOKEN" \
     cultureamp/danger-js \
-    yarn run danger ci
+    /bin/sh /build/docker_js_run
 }

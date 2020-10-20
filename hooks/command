@@ -24,10 +24,8 @@ if [[ -z "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" ]]; then
   exit 1
 elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "js" ]; then
   js_build
-  js_install
   js_run
 elif [ "$BUILDKITE_PLUGIN_DANGER_SYSTEMS_LANGUAGE" == "ruby" ]; then
   ruby_build
-  ruby_install
   ruby_run
 fi;

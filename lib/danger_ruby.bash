@@ -13,22 +13,10 @@ ruby_build () {
     -f "$BASEDIR/Dockerfile.ruby" "$(pwd)"
 }
 
-ruby_install () {
-  GITHUB_REGISTRY_TOKEN=${GITHUB_REGISTRY_TOKEN:-}
-
-  BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
-
-  echo "--- :docker: Installing ruby dependencies"
-  docker run \
-    --rm \
-    -v "$(pwd)":/home/app \
-    -v "$BASEDIR/bin":/build \
-    -e GITHUB_REGISTRY_TOKEN="$GITHUB_REGISTRY_TOKEN" \
-    cultureamp/danger-ruby \
-    /bin/bash /build/docker_ruby_install
-}
-
 ruby_run () {
+  # Installation vars
+  GITHUB_REGISTRY_TOKEN=${GITHUB_REGISTRY_TOKEN:-}
+  # Run vars
   # Note this ENV var differs from the `DANGER_GITHUB_API_TOKEN` that danger
   # expects to be available for reasons of descriptiveness
   DANGER_SYSTEMS_GITHUB_TOKEN=${DANGER_SYSTEMS_GITHUB_TOKEN:-}
@@ -38,10 +26,13 @@ ruby_run () {
   BUILDKITE_PULL_REQUEST=${BUILDKITE_PULL_REQUEST:-}
   BUILDKITE_BUILD_URL=${BUILDKITE_BUILD_URL:-}
 
+  BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
   echo "--- :docker: Running danger-ruby"
   docker run \
-    --rm \
     -v "$(pwd)":/home/app \
+    -v "$BASEDIR/bin":/build \
+    -e GITHUB_REGISTRY_TOKEN="$GITHUB_REGISTRY_TOKEN" \
     -e DANGER_GITHUB_API_TOKEN="$DANGER_SYSTEMS_GITHUB_TOKEN" \
     -e BUILDKITE="$BUILDKITE" \
     -e BUILDKITE_REPO="$BUILDKITE_REPO" \
@@ -49,5 +40,5 @@ ruby_run () {
     -e BUILDKITE_PULL_REQUEST="$BUILDKITE_PULL_REQUEST" \
     -e BUILDKITE_BUILD_URL="$BUILDKITE_BUILD_URL" \
     cultureamp/danger-ruby \
-    danger
+    /bin/bash /build/docker_ruby_run
 }

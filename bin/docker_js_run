@@ -15,3 +15,6 @@ if [[ -z "${GITHUB_REGISTRY_TOKEN:-}" ]]; then \
 
 # Install danger if it not in the project deps
 yarn run danger -V &>/dev/null || yarn add --dev danger
+
+# Run danger
+yarn run danger ci

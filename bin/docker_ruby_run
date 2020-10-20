@@ -8,3 +8,6 @@ BUNDLED_WITH="$(grep 'BUNDLED WITH' -A 1 Gemfile.lock | grep -v BUNDLED | tr -d 
 gem install bundler --version "$BUNDLED_WITH" \
   && gem install bundle-only \
   && bundle-only danger
+
+# Run danger
+danger
