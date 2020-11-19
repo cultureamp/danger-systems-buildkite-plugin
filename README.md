@@ -1,3 +1,8 @@
+⚠️ This plugin has been deprecated (for now) in favour of
+[danger-systems-github-action](https://github.com/cultureamp/danger-systems-github-action).
+
+***
+
 # Danger Systems Buildkite Plugin
 
 Run [danger]([https://](https://danger.systems/)) as part of your pipeline.
